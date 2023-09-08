@@ -76,7 +76,7 @@ def choose_playlist(token, playlists):
         else:
             print(f'Please enter a valid playlist. :)\n')
 
-def randomize_playlist(token, chosen):
+def access_playlist(token, chosen):
     url = f"https://api.spotify.com/v1/playlists/{chosen}/tracks" #access the playlist based on the id (chosen) passed in
     headers = get_auth_header(token)
     result = get(url, headers = headers)
