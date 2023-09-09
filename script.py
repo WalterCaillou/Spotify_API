@@ -50,6 +50,8 @@ def get_auth_header(token):
 #     json_result = json.loads(result.content)["tracks"]
 #     return json_result
 
+
+
 def get_playlists(token, user_id):
     url = f"https://api.spotify.com/v1/users/{user_id}/playlists" # url given by spotify developer website
     headers = get_auth_header(token)
@@ -63,21 +65,18 @@ def choose_playlist(token, playlists):
     while (entry.lower() != 'quit'):
         for index, playlist in enumerate(playlists):
             if playlist['name'] not in playlistdict: #checks for duplicates
-                playlistdict[playlist['name'].lower()] = playlist['id'].lower() #adds an entry to the dict
+                playlistdict[playlist['name'].lower()] = playlist['id'] #adds an entry to the dict
             print(f"{index + 1}. {playlist['name']}")
 
-        print(playlistdict)
         entry = input(f"Choose a playlist to randomize (q or quit to stop):\n")
-        print(entry.lower())
-        if entry.lower() in playlistdict: #checks if the user input exists
-            print(playlist[entry.lower()])
-            final = playlist[entry.lower()]
+        if entry.lower() in playlistdict: # checks if the user input exists
+            final = playlistdict[entry.lower()]
             return final
         else:
             print(f'Please enter a valid playlist. :)\n')
 
-def access_playlist(token, chosen):
-    url = f"https://api.spotify.com/v1/playlists/{chosen}/tracks" #access the playlist based on the id (chosen) passed in
+def access_playlist(token, playlist_id):
+    url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks" #access the playlist based on the id (chosen) passed in
     headers = get_auth_header(token)
     result = get(url, headers = headers)
     json_result = json.loads(result.content)["items"]
@@ -91,8 +90,9 @@ token = get_token()
 # artist_id = result["id"]
 # songs = get_songs_by_artist(token, artist_id)
 playlists = get_playlists(token, 1225275215)
-# chosen = choose_playlist(token, playlists)
-print(choose_playlist(token, playlists))
-# print(randomize_playlist(token, chosen))
-
+playlist_id = choose_playlist(token, playlists)
+print(playlist_id)
+songs = access_playlist(token, playlist_id)
+for index, song in enumerate(songs):
+    print(f"{index + 1}. {song['track']['name']}")
 
