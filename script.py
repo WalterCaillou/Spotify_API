@@ -1,13 +1,22 @@
+import http
 from dotenv import load_dotenv
 import os
 import base64
 from requests import post, get
 import json
+# import spotipy
+# from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
 
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
+user_id = 1225275215
+
+# def Spotipy_token():
+#     return SpotifyOAuth(client_id = client_id,
+#                         client_secret = client_secret,
+#                         redirect_uri= http://localhost,)
 
 def get_token():
     auth_string = client_id + ":" + client_secret
@@ -29,29 +38,6 @@ def get_token():
 def get_auth_header(token):
     return {"Authorization": "Bearer " + token}
 
-# def search_for_artist(token, artist_name):
-#     url = " https://api.spotify.com/v1/search"
-#     headers = get_auth_header(token)
-#     query = f"?q={artist_name}&type=artist&limit=1"
-
-#     query_url = url + query
-#     result = get(query_url, headers = headers)
-#     json_result = json.loads(result.content)["artists"]["items"]
-#     if len(json_result) == 0:
-#         print("No artist with this name exists...")
-#         return None
-    
-#     return json_result[0]
-
-# def get_songs_by_artist(token, artist_id):
-#     url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks?country=US"
-#     headers = get_auth_header(token)
-#     result = get(url, headers=headers)
-#     json_result = json.loads(result.content)["tracks"]
-#     return json_result
-
-
-
 def get_playlists(token, user_id):
     url = f"https://api.spotify.com/v1/users/{user_id}/playlists" # url given by spotify developer website
     headers = get_auth_header(token)
@@ -59,7 +45,7 @@ def get_playlists(token, user_id):
     json_result = json.loads(result.content)["items"]
     return json_result
 
-def choose_playlist(token, playlists):
+def choose_playlist(playlists):
     entry = ''
     playlistdict = {}
     while (entry.lower() != 'quit'):
@@ -73,15 +59,31 @@ def choose_playlist(token, playlists):
             final = playlistdict[entry.lower()]
             return final
         else:
-            print(f'Please enter a valid playlist. :)\n')
+            print(f'Please enter a valid playlist.\n')
 
-def access_playlist(token, playlist_id):
+def randomizer_playlist(token, playlist_id):
     url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks" #access the playlist based on the id (chosen) passed in
     headers = get_auth_header(token)
     result = get(url, headers = headers)
-    json_result = json.loads(result.content)["items"]
+    json_result = json.loads(result.content)["items"] #json_result is the songs of the playlist
     return json_result
-        
+
+def create_playlist(token, user_id):
+    endpoint_url = f"https://api.spotify.com/v1/users/{user_id}/playlists"
+    headers = get_auth_header(token)
+    # playlist_name = input("Enter a playlist name: ")
+    # body = {"name": f"{playlist_name}"
+    #         # "public": True
+    #         }
+    # response = post(url, headers=headers, data=body)
+    # playlist_id = response.json()
+    request_body = json.dumps({
+          "name": "Indie bands like Franz Ferdinand but using Python",
+          "description": "My first programmatic playlist, yooo!",
+          "public": True # let's keep it between us - for now
+        })
+    response = post(url = endpoint_url, data = request_body, headers=headers)
+    return response
 
     
 
@@ -89,10 +91,8 @@ token = get_token()
 # result = search_for_artist(token, "Slander")
 # artist_id = result["id"]
 # songs = get_songs_by_artist(token, artist_id)
-playlists = get_playlists(token, 1225275215)
-playlist_id = choose_playlist(token, playlists)
-print(playlist_id)
-songs = access_playlist(token, playlist_id)
-for index, song in enumerate(songs):
-    print(f"{index + 1}. {song['track']['name']}")
+# playlists = get_playlists(token, user_id)
+# playlist_id = choose_playlist(playlists)
+# print(playlist_id)
+print(create_playlist(token, user_id))
 
