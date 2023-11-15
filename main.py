@@ -6,15 +6,15 @@ from itertools import islice
 from spotipy.oauth2 import SpotifyOAuth
 import json
 
-# def create_playlist(user_id, uri):
-#     playlist_name = sp.playlist(uri)['name']
-#     create = sp.user_playlist_create(user=user_id,name=f"{playlist_name} (new)")
-#     # total_tracks = sp.playlist_tracks(uri)
-#     # print(create['id'])
+def create_playlist(user_id, uri):
+    playlist_name = sp.playlist(uri)['name']
+    create = sp.user_playlist_create(user=user_id,name=f"{playlist_name} (new)")
+    # total_tracks = sp.playlist_tracks(uri)
+    # print(create['id'])
 
-#     randomize_playlist(songList, create['id'])
+    randomize_playlist(songList, create['id'])
 
-#     return "WIP"
+    return "WIP"
 def add_songList(playlist_uri, songList):
     items = sp.playlist_items(playlist_uri)
     tracks = items['items']
@@ -32,8 +32,8 @@ def randomize_playlist(songList, playlistid):
     # sp.playlist_add_items(playlist_id=playlist_id, items=songList)
     iterator = iter(songList)
     while chunk := list(islice(iterator, 100)):
-        sp.playlist_replace_items(playlistid,chunk)
-    # sp.playlist_reorder_items(playlist_id=playlistid, items=songList)
+        sp.playlist_add_items(playlistid,chunk)
+    # sp.playlist_replace_items(playlist_id=playlistid, items=songList)
 
     
 # prints out all the users playlists and returns the uri of the playlist the user chooses
@@ -74,8 +74,8 @@ if __name__ == "__main__":
     playlists = sp.user_playlists(user_id)
     uri = choose_playlist(playlists)
     add_songList(uri, songList)
-    # create_playlist(user_id, uri)
-    randomize_playlist(songList, uri)
+    create_playlist(user_id, uri)
+    # randomize_playlist(songList, uri)
     # name = sp.playlist(uri)['name']
     # create_playlist(user_id, uri)
 
