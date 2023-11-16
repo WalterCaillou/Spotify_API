@@ -8,7 +8,7 @@ import json
 
 def create_playlist(user_id, uri):
     playlist_name = sp.playlist(uri)['name']
-    create = sp.user_playlist_create(user=user_id,name=f"{playlist_name} (new)")
+    create = sp.user_playlist_create(user=user_id,name=f"{playlist_name} (test)")
     # total_tracks = sp.playlist_tracks(uri)
     # print(create['id'])
 
@@ -35,6 +35,9 @@ def randomize_playlist(songList, playlistid):
         sp.playlist_add_items(playlistid,chunk)
     # sp.playlist_replace_items(playlist_id=playlistid, items=songList)
 
+def delete_playlist(user_id, playlistid):
+    sp.user_playlist_unfollow(user_id, playlistid[17:])
+    return "Deleted previous playlist"
     
 # prints out all the users playlists and returns the uri of the playlist the user chooses
 def choose_playlist(playlists):
@@ -73,8 +76,10 @@ if __name__ == "__main__":
     user_id = sp.current_user()['id']
     playlists = sp.user_playlists(user_id)
     uri = choose_playlist(playlists)
+    # print(uri)
     add_songList(uri, songList)
     create_playlist(user_id, uri)
+    delete_playlist(user_id, uri)
     # randomize_playlist(songList, uri)
     # name = sp.playlist(uri)['name']
     # create_playlist(user_id, uri)
