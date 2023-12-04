@@ -61,9 +61,8 @@ def choose_playlist(playlists):
     return playlist_uri
 
 if __name__ == "__main__":
-    client_id = "ebc6601cc48e430b8e089ed9af792f4b"
-    client_secret = "dbe9bffa0b194c9e8579ac0180a8b39a"
-    # user_id = 1225275215
+    client_id = "PUT YOUR CLIENT ID HERE"
+    client_secret = "PUT YOUR CLIENT SECRET HERE"
 
     scope = "playlist-modify-public user-library-read playlist-modify-private playlist-read-private"
 
@@ -76,11 +75,7 @@ if __name__ == "__main__":
     user_id = sp.current_user()['id']
     playlists = sp.user_playlists(user_id)
     uri = choose_playlist(playlists)
-    # print(uri)
     add_songList(uri, songList)
     create_playlist(user_id, uri)
     delete_playlist(user_id, uri)
-    # randomize_playlist(songList, uri)
-    # name = sp.playlist(uri)['name']
-    # create_playlist(user_id, uri)
 
